@@ -2,7 +2,13 @@
 enum ProjectStatus { Active, Finished }
 
 class Project {
-    constructor(public id: string, public title: string, public description: string, public people: number, public status: ProjectStatus) {}
+    constructor(
+        public id: string, 
+        public title: string, 
+        public description: string, 
+        public people: number, 
+        public status: ProjectStatus
+    ) {}
 }
 
 // Listener type
@@ -28,7 +34,7 @@ class ProjectState extends State<Project> {
     }
 
     static getInstance() {
-        if(this.instance) {
+        if (this.instance) {
             return this.instance;
         }
         this.instance = new ProjectState();
@@ -49,7 +55,7 @@ class ProjectState extends State<Project> {
         );
 
         this.projects.push(newProject);
-        for(const listenerFn of this.listeners) {
+        for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
         }
     }
@@ -71,23 +77,23 @@ interface Validatable {
 // Validation Input function
 function validate(validatableInput: Validatable) {
     let isValid = true;
-    if(validatableInput.required) {
+    if (validatableInput.required) {
         isValid = isValid && validatableInput.value.toString().trim().length !== 0;
     }
 
-    if(validatableInput.minLength != null && typeof validatableInput.value === 'string') {
+    if (validatableInput.minLength != null && typeof validatableInput.value === 'string') {
         isValid = isValid && validatableInput.value.length >= validatableInput.minLength;
     }
 
-    if(validatableInput.maxLength != null && typeof validatableInput.value === 'string') {
+    if (validatableInput.maxLength != null && typeof validatableInput.value === 'string') {
         isValid = isValid && validatableInput.value.length <= validatableInput.maxLength;
     }
 
-    if(validatableInput.min != null && typeof validatableInput.value === 'number') {
+    if (validatableInput.min != null && typeof validatableInput.value === 'number') {
         isValid = isValid && validatableInput.value >= validatableInput.min;
     }
 
-    if(validatableInput.max != null && typeof validatableInput.value === 'number') {
+    if (validatableInput.max != null && typeof validatableInput.value === 'number') {
         isValid = isValid && validatableInput.value <= validatableInput.max;
     }
 
@@ -124,7 +130,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
         const importedNode = document.importNode(this.templateElement.content, true);
         this.element = importedNode.firstElementChild as U;
 
-        if(newElementId) {
+        if (newElementId) {
             this.element.id = newElementId;
         }
 
@@ -166,7 +172,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     configure() {
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(prj => {
-                if(this.type === 'active') {
+                if (this.type === 'active') {
                     return prj.status === ProjectStatus.Active;
                 }
 
@@ -223,7 +229,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
             max: 5
         };
 
-        if(!validate(titleValidatable) || !validate(descValidatable) || !validate(peopleValidatable)) {
+        if (!validate(titleValidatable) || !validate(descValidatable) || !validate(peopleValidatable)) {
             alert('Invalid input, please try again!');
         } else {
             return [enteredTitle, enteredDescription, +enteredPeople];
@@ -242,7 +248,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
     private submitHandler(event: Event) {
         event.preventDefault();
         const userInput = this.gatherUserInput();
-        if(Array.isArray(userInput)) {
+        if (Array.isArray(userInput)) {
             const [title, desc, people] = userInput;
             projectState.addProject(title, desc, people);
             this.clearInputs();
